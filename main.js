@@ -6,8 +6,6 @@
 
 $(document).ready(function() {
 
-    // IL CODICE CHE SEGUE VIENE ESGUITO INDIPENDENTEMENTE DAGLI EVENTI CLICK DELL'UTENTE - AUTOPLAY
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     var interval = 2000; // intervallo temporale tra 2 visualizzazioni
     var firstSlide = 0; // indice della 1a slide del mio carousel
     var lastSlide = 3; // indice dell'ultima slide del mio carousel
@@ -16,8 +14,8 @@ $(document).ready(function() {
 
     startAutoplay();
 
-    // IL CODICE CHE SEGUE E' PILOTATO DAGLI EVENTI "CLICK" (SU FRECCE E BULLETS) - USER DRIVEN
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+    // ----------------------------- EVENTs----------------------------------
 
     // intercetto click sulle frecce
     $('.arrow').click(function() {
@@ -168,8 +166,6 @@ $(document).ready(function() {
         display(imgPosition); // passo alla funzione l'indice della nuova posizione da visualizzare
 
     }
-
-
 
 
     function display(newPosition) {
