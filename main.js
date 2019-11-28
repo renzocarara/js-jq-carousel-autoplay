@@ -8,7 +8,7 @@ $(document).ready(function() {
 
     // IL CODICE CHE SEGUE VIENE ESGUITO INDIPENDENTEMENTE DAGLI EVENTI CLICK DELL'UTENTE - AUTOPLAY
     // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    var interval = 3000; // intervallo temporale tra 2 visualizzazioni
+    var interval = 2000; // intervallo temporale tra 2 visualizzazioni
     var firstSlide = 0; // indice della 1a slide del mio carousel
     var lastSlide = 3; // indice dell'ultima slide del mio carousel
     var currentSlide = 0; // indice iniziale dalla slide da visualizzare
@@ -41,6 +41,37 @@ $(document).ready(function() {
 
     }); // end gestione click su bullett
 
+    // intercetto mouseenter sulla slide
+    $("#slider").mouseenter(function() {
+        handleImgMouseenter();
+
+    }); // end gestione mouseenter su slide
+
+    // intercetto mouseenter sulla slide
+    $("#slider").mouseleave(function() {
+        handleImgMouseleave();
+
+    }); // end gestione mouseleave su slide
+
+
+    function handleImgMouseenter() {
+
+        // l'utente ha spostato il mouse sopra alla slide
+        // blocco l'auto play, lo rilancerò nuovamente se l'utente sposta il puntatore
+        // dalla slide (evento mouseleave)
+        clearInterval(player); // cancello la setInterval
+    }
+
+    function handleImgMouseleave() {
+
+        // l'utente ha tolto il mouse dalla slide, rilancio l'autoplay,
+        player = setInterval(function() {
+
+            // faccio partire l'autoplay che verrà richiamato ad intervalli di durata 'interval',
+            autoplay();
+
+        }, interval); // end setInterval()
+    }
 
     // ----------------------------- FUNCTIONs----------------------------------
     function handleBulletClick(bulletclicked) {
