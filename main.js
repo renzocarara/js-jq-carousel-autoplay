@@ -12,16 +12,9 @@ $(document).ready(function() {
     var firstSlide = 0; // indice della 1a slide del mio carousel
     var lastSlide = 3; // indice dell'ultima slide del mio carousel
     var currentSlide = 0; // indice iniziale dalla slide da visualizzare
-    var player; //riferimento alla setInterval
+    var playing = false; // mi indica l'autoplay lanciato con la setInterval
 
-    // "innesco" l'autoplay, che mi parte dopo 'interval' ms
-    player = setInterval(function() {
-
-        // faccio partire l'autoplay che verrà richiamato ad intervalli di durata 'interval',
-        autoplay();
-
-    }, interval); // end setInterval()
-
+    startAutoplay();
 
     // IL CODICE CHE SEGUE E' PILOTATO DAGLI EVENTI "CLICK" (SU FRECCE E BULLETS) - USER DRIVEN
     // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
@@ -43,29 +36,34 @@ $(document).ready(function() {
 
     // intercetto mouseenter sulla slide
     $("#slider").mouseenter(function() {
-        handleImgMouseenter();
+
+        // handleImgMouseenter();
 
     }); // end gestione mouseenter su slide
 
-    // intercetto mouseenter sulla slide
+    // intercetto mouseleave sulla slide
     $("#slider").mouseleave(function() {
-        handleImgMouseleave();
+
+        // handleImgMouseleave();
 
     }); // end gestione mouseleave su slide
 
+    // intercetto click sulla slide
+    $("#slider").click(function() {
 
-    function handleImgMouseenter() {
+        handleImgClick();
 
-        // l'utente ha spostato il mouse sopra alla slide
-        // blocco l'auto play, lo rilancerò nuovamente se l'utente sposta il puntatore
-        // dalla slide (evento mouseleave)
-        clearInterval(player); // cancello la setInterval
-    }
+    }); // end gestione mouseenter su slide
 
-    function handleImgMouseleave() {
 
-        // l'utente ha tolto il mouse dalla slide, rilancio l'autoplay,
-        player = setInterval(function() {
+    // ----------------------------- FUNCTIONs----------------------------------
+    function startAutoplay() {
+
+        // "innesco" l'autoplay, che mi parte dopo 'interval' ms
+        // nella variabile playing viene messo un valore "non-zero",
+        // che mi serve poi sia per cancellare la SetInterval che per
+        // verificare se l'autoplay è ancora attivo o meno
+        playing = setInterval(function() {
 
             // faccio partire l'autoplay che verrà richiamato ad intervalli di durata 'interval',
             autoplay();
@@ -73,7 +71,58 @@ $(document).ready(function() {
         }, interval); // end setInterval()
     }
 
-    // ----------------------------- FUNCTIONs----------------------------------
+    function autoplay() {
+
+        // questa funzione chiama semplicemente la funzione display() per visualizzare
+        // la nuova slide, e poi calcola il nuovo indice della prossima slide
+        // lavora sulla var globale 'currentSlide' (!!)
+
+        //  chiamo la funzione che mi aggiorna la pagina
+        display(currentSlide);
+
+        // aggiorno l'indice per la prossima visualizzzione
+        if (currentSlide == lastSlide) {
+            currentSlide = firstSlide; // sono in fondo, riparto dalla prima slide
+        } else {
+            currentSlide++;
+        }
+    }
+
+    function handleImgClick() {
+        // devo gestire il click in 2 diverse situazioni:
+        // l'autoplay sta girando ---> fermo l'autoplay
+        // l'autoplay è fermo ---> faccio partire l'autoplay
+        // sfrutto la variabile 'playing' che mi referenzia la setInterval() che
+        // innesca l'autoplay
+
+        if (playing) {
+            // l'autoplay è "running", fermo l'autoplay
+            clearInterval(playing); // cancello la setInterval
+            playing = false; // segnalo che l'autoplay non è "running"
+        } else {
+            // l'autoplay non sta girando, faccio partire l'autoplay
+            startAutoplay();
+        }
+    }
+
+
+    function handleImgMouseenter() {
+
+        // l'utente ha spostato il mouse sopra alla slide
+        // blocco l'auto play, lo rilancerò nuovamente se l'utente sposta il puntatore
+        // dalla slide (evento mouseleave)
+        clearInterval(playing); // cancello la setInterval
+        playing = false; // segnalo che l'autoplay non è "running"
+    }
+
+
+    function handleImgMouseleave() {
+
+        // l'utente ha rimosso il mouse dalla slide
+        // faccio ripartire l'autoplay
+        startAutoplay();
+    }
+
     function handleBulletClick(bulletclicked) {
 
         // ricavo l'indice (posizione) dell'elemento cliccato (bullet),
@@ -121,22 +170,6 @@ $(document).ready(function() {
     }
 
 
-    function autoplay() {
-
-        // questa funzione chiama semplicemente la funzione display() per visualizzare
-        // la nuova slide, e poi calcola il nuovo indice della prossima slide
-        // lavora sulla var globale 'currentSlide'
-
-        //  chiamo la funzione che mi aggiorna la pagina
-        display(currentSlide);
-
-        // aggiorno l'indice per la prossima visualizzzione
-        if (currentSlide == lastSlide) {
-            currentSlide = firstSlide; // sono in fondo, riparto dalla prima slide
-        } else {
-            currentSlide++;
-        }
-    }
 
 
     function display(newPosition) {
