@@ -8,34 +8,19 @@ $(document).ready(function() {
 
     // IL CODICE CHE SEGUE VIENE ESGUITO INDIPENDENTEMENTE DAGLI EVENTI CLICK DELL'UTENTE - AUTOPLAY
     // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-
-    var currentSlide = 0; // indice dalla slide da visualizzare
+    var interval = 3000; // intervallo temporale tra 2 visualizzazioni
     var firstSlide = 0; // indice della 1a slide del mio carousel
     var lastSlide = 3; // indice dell'ultima slide del mio carousel
-    var interval = 2500; // intervallo temporale tra 2 visualizzazioni
+    var currentSlide = 0; // indice iniziale dalla slide da visualizzare
+    var player; //riferimento alla setInterval
 
-    // genero un indice casuale, in modo che ad ogni reload della pagina,
-    // il carousel parta da una slide probabilisticamente diversa
-    // currentSlide = generaRandom(firstSlide, lastSlide);
-    // display(currentSlide); // parto subito con una visualizzazione della pagina indicizzata randomicamente
-    // oppure devo settare active...alla immagine/pallino con indice currentSlide
+    // "innesco" l'autoplay, che mi parte dopo 'interval' ms
+    player = setInterval(function() {
 
-    // console.log("currentSlide", currentSlide);
-
-    // "innesco" l'autoplay, che mi parte tra 'interval' ms
-    var autoplay = setInterval(function() {
-
-        display(currentSlide); // ad intervalli di durata 'interval', chiamo la funzione che mi aggiorna la pagina
-
-        //calcolo l'indice per la prossima visualizzzione
-        if (currentSlide == lastSlide) {
-            currentSlide = firstSlide; // sono in fondo, riparto dalla prima slide
-        } else {
-            currentSlide++;
-        }
+        // faccio partire l'autoplay che verrà richiamato ad intervalli di durata 'interval',
+        autoplay();
 
     }, interval); // end setInterval()
-
 
 
     // IL CODICE CHE SEGUE E' PILOTATO DAGLI EVENTI "CLICK" (SU FRECCE E BULLETS) - USER DRIVEN
@@ -44,13 +29,41 @@ $(document).ready(function() {
     // intercetto click sulle frecce
     $('.arrow').click(function() {
 
+        handleArrowClick($(this)); //gli passo il riferimento della freccia cliccata (this)
+
+    }); // end gestione click su frecce
+
+
+    // intercetto click su bullets
+    $('.bullet').click(function() {
+
+        handleBulletClick($(this)); //gli passo il riferimento al bullet cliccato (this)
+
+    }); // end gestione click su bullett
+
+
+    // ----------------------------- FUNCTIONs----------------------------------
+    function handleBulletClick(bulletclicked) {
+
+        // ricavo l'indice (posizione) dell'elemento cliccato (bullet),
+        // rispetto ai suoi fratelli tutti all'interno dell'elemento parent che li contiene
+        // tramite la funzione index() applicata sull'elemento $(this) cioè l'elemento sul quale
+        // ho intercettato il click, passo questo indice alla funzione che gestisce le visualizzzioni
+        var bulletPosition = ($(bulletclicked).index());
+
+        display(bulletPosition);
+    }
+
+
+    function handleArrowClick(arrowClicked) {
+
         // recupero l'indice della slide corrente
         // l'immagine corrente è quella che ha la classe active associata
         // in ogni istante deve essercene sempre e solo una
         var imgPosition = $('img.active').index();
 
         // in base a dove devo andare e a dove sono, decido quale sarà la prossima slide
-        if (($(this).hasClass("next"))) { // c'è stato click su freccia in avanti
+        if (($(arrowClicked).hasClass("next"))) { // c'è stato click su freccia in avanti
 
             if ($('img.active').hasClass("last")) {
                 // sono in fondo al carousel, la prossima immagine da visualizzare sarà la prima
@@ -61,7 +74,7 @@ $(document).ready(function() {
             }
         }
 
-        if (($(this).hasClass("prev"))) { // c'è stato click su freccia indietro
+        if (($(arrowClicked).hasClass("prev"))) { // c'è stato click su freccia indietro
 
             if (($('img.active').hasClass("first"))) {
                 // sono all'inizio del carousel, la prossima immagine da visualizzare sarà l'ultima (ciclo all'indietro)
@@ -74,23 +87,25 @@ $(document).ready(function() {
 
         display(imgPosition); // passo alla funzione l'indice della nuova posizione da visualizzare
 
-    }); // end gestione click su frecce
+    }
 
 
+    function autoplay() {
 
-    // intercetto click su bullets
-    $('.bullet').click(function() {
+        // questa funzione chiama semplicemente la funzione display() per visualizzare
+        // la nuova slide, e poi calcola il nuovo indice della prossima slide
+        // lavora sulla var globale 'currentSlide'
 
-        // ricavo l'indice (posizione) dell'elemento cliccato (bullet),
-        // rispetto ai suoi fratelli tutti all'interno dell'elemento parent che li contiene
-        // tramite la funzione index() applicata sull'elemento $(this) cioè l'elemento sul quale
-        // ho intercettato il click, passo questo indice alla funzione che gestisce le visualizzzioni
-        var bulletPosition = ($(this).index());
+        //  chiamo la funzione che mi aggiorna la pagina
+        display(currentSlide);
 
-        display(bulletPosition);
-
-    }); // end gestione click su bullett
-
+        // aggiorno l'indice per la prossima visualizzzione
+        if (currentSlide == lastSlide) {
+            currentSlide = firstSlide; // sono in fondo, riparto dalla prima slide
+        } else {
+            currentSlide++;
+        }
+    }
 
 
     function display(newPosition) {
@@ -108,15 +123,15 @@ $(document).ready(function() {
         newSlide.addClass("active"); // visualizzo la nuova immagine corrente aggiungendogli la classe active
         newBul.addClass("selected"); // evidenzio il bullet
 
-        // SOLUZIONE CHE SFRUTTA VAR GLOBALE 'currentSlide', IMMEDIATA, CONCISA, MA NON BELLISSIMA A LIVELLO DI LOGICA IMPLEMENTATIVA
-        // allineo l'autoplay all'intervento dell'utente, aggiornando la slide corrente "vista" da autoplay attraverso la var globale currentSlide
+        // SOLUZIONE1 - CHE SFRUTTA VAR GLOBALE 'currentSlide', IMMEDIATA, CONCISA, MA NON BELLISSIMA A LIVELLO DI LOGICA IMPLEMENTATIVA
+        // allineo l'autoplay all'intervento dell'utente, aggiornando la slide corrente "vista" da autoplay, attraverso la var globale currentSlide
         currentSlide = newPosition;
 
     }
 
-    function generaRandom(min, max) {
-        // genera un numero casuale intero tra min e max
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    // function generaRandom(min, max) {
+    //     // genera un numero casuale intero tra min e max
+    //     return Math.floor(Math.random() * (max - min + 1)) + min;
+    // }
 
 }); // end document ready
