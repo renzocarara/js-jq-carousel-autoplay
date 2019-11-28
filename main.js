@@ -12,16 +12,15 @@ $(document).ready(function() {
     var currentSlide = 0; // indice dalla slide da visualizzare
     var firstSlide = 0; // indice della 1a slide del mio carousel
     var lastSlide = 3; // indice dell'ultima slide del mio carousel
-    var interval = 3500; // intervallo temporale tra 2 visualizzazioni
+    var interval = 2500; // intervallo temporale tra 2 visualizzazioni
 
     // genero un indice casuale, in modo che ad ogni reload della pagina,
     // il carousel parta da una slide probabilisticamente diversa
     // currentSlide = generaRandom(firstSlide, lastSlide);
     // display(currentSlide); // parto subito con una visualizzazione della pagina indicizzata randomicamente
+    // oppure devo settare active...alla immagine/pallino con indice currentSlide
 
-    //oppure devo settare active...alla immagine/pallino con indice currentSlide
-
-    console.log("currentSlide", currentSlide);
+    // console.log("currentSlide", currentSlide);
 
     // "innesco" l'autoplay, che mi parte tra 'interval' ms
     var autoplay = setInterval(function() {
@@ -39,13 +38,7 @@ $(document).ready(function() {
 
 
 
-
-
-
-
-
-
-    // IL CODICE CHE SEGUE E' PILOTATO E GLI EVENTI CLICK (SU FRECCE E BULLETS) - USER DRIVEN
+    // IL CODICE CHE SEGUE E' PILOTATO DAGLI EVENTI "CLICK" (SU FRECCE E BULLETS) - USER DRIVEN
     // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
     // intercetto click sulle frecce
@@ -114,6 +107,11 @@ $(document).ready(function() {
 
         newSlide.addClass("active"); // visualizzo la nuova immagine corrente aggiungendogli la classe active
         newBul.addClass("selected"); // evidenzio il bullet
+
+        // SOLUZIONE CHE SFRUTTA VAR GLOBALE 'currentSlide', IMMEDIATA, CONCISA, MA NON BELLISSIMA A LIVELLO DI LOGICA IMPLEMENTATIVA
+        // allineo l'autoplay all'intervento dell'utente, aggiornando la slide corrente "vista" da autoplay attraverso la var globale currentSlide
+        currentSlide = newPosition;
+
     }
 
     function generaRandom(min, max) {
